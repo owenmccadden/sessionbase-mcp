@@ -80,6 +80,19 @@ export const uploadSessionTool = {
         }]
       };
     } catch (error) {
+      const errorMessage = String(error);
+      
+      // Check if this is a Gemini session not found error
+      if (params.gemini && errorMessage.includes('No Gemini CLI checkpoints found for project:')) {
+        return {
+          content: [{
+            type: 'text' as const,
+            text: `No Gemini CLI checkpoints found for this project. To create a session that can be uploaded, run \`/chat save\` in your Gemini CLI session first, then try uploading again.`
+          }],
+          isError: true
+        };
+      }
+      
       return {
         content: [{
           type: 'text' as const,
